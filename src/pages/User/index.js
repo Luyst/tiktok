@@ -10,6 +10,7 @@ import EditProfileModal from './EditProfileModal';
 import Icons from '~/component/Icons';
 
 const cx = classNames.bind(styles);
+const isVideo = (url) => /\.(mp4|mov|avi|webm)$/i.test(url);
 
 export default function User() {
     const [tabStyle, setTabStyle] = useState({ tabPosition: '0px', tabWidth: '60px' });
@@ -21,6 +22,7 @@ export default function User() {
     const currentUserInfo = useContext(UserContext);
     const currentUser = currentUserInfo.user;
     const [followList, setFollowList] = useState(currentUserInfo.following);
+
     useEffect(() => {
         if (query) {
             const getUser = async () => {
@@ -209,7 +211,16 @@ export default function User() {
                         </ul>
                         <div className={cx('borderRun')} style={runTabStyle}></div>
                     </div>
-                    <UserVideo videos={videos} />
+                    {videos.map((item, index) => (
+                        <div key={index} className="relative w-full aspect-[9/16] rounded-lg overflow-hidden">
+                            {isVideo(item.url) ? (
+                                <UserVideo videos={videos} />
+                            ) : (
+                                <img src={item.url} alt={`upload-${index}`} className="w-full h-full object-cover" />
+                            )}
+                        </div>
+                    ))}
+
                     {showModal && (
                         <div className={cx('modal-container')}>
                             <EditProfileModal
